@@ -41,6 +41,8 @@ class PortfolioController extends Controller
             'end_date' => 'required|date_format:Y/m/d',
             'tech' => 'required|array',
             'desc' => 'required|array',
+            'preview_image' => 'required|memes:png,jpg,jpeg',
+            'image' => 'required'
         ]);
         if ($validator->fails()) {
             return response()->json([$validator->errors(), 401]);
