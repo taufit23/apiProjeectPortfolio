@@ -14,4 +14,8 @@ class ImagesPortfolio extends Model
     {
         return $this->belongsToMany(Portfolio::class, 'portfolio_images');
     }
+    public function getImageUrl()
+    {
+        return $this->image = asset($this->image);
+    }
 }

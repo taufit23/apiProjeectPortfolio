@@ -21,6 +21,12 @@ class PortfolioController extends Controller
     public function index()
     {
         $portfolio = Portfolio::with('tech', 'portfolioClient', 'imagesPortfolio')->paginate(10);
+        foreach ($portfolio as $key => $port) {
+            $port->getPreviewImageUrl();
+            foreach ($port->imagesPortfolio as $key => $img) {
+                $img->getImageUrl();
+            }
+        }
         return response()->json($portfolio);
     }
 
@@ -115,9 +121,14 @@ class PortfolioController extends Controller
      */
     public function show(string $slug)
     {
-        $portfolio = Portfolio::where('slug', $slug)->with('tech', 'portfolioClient')->first();
+        $portfolio = Portfolio::where('slug', $slug)->with('tech', 'portfolioClient', 'imagesPortfolio')->first();
         if ($portfolio->preview_image != null) {
             $portfolio->getPreviewImageUrl();
+        }
+        if ($portfolio->imagesPortfolio != null) {
+            foreach ($portfolio->imagesPortfolio as $img) {
+                $img->getImageUrl();
+            }
         }
         return response()->json($portfolio);
     }
@@ -125,7 +136,7 @@ class PortfolioController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CreatePortfolioRequest $request, Portfolio $portfolio)
+    public function update(Request $request, Portfolio $portfolio)
     {
         $teches = $request->tech;
         $techidList = [];
@@ -171,9 +182,28 @@ class PortfolioController extends Controller
 
             $portfolio->preview_image = $url;
         }
+        // Multiple Image
+        $imagesIdArray = [];
+        if ($request->hasFile('image')) {
+            $images = $request->file('image');
+            foreach ($images as $img => $index) {
+                $picture = Image::make($index);
+                if ($picture->width() > 450 or $picture->height() > 450) {
+                    $this->setImageSize($picture);
+                }
+                $pictName = Str::random(3) . '.' . $index->getClientOriginalExtension();
+                $picture->save(public_path('images/portfolio/' . $pictName));
+                $pictures = new ImagesPortfolio();
+                $pictures->image = "images/portfolio/" . $pictName;
+                $pictures->desc = $request->desc[$img];
+                $pictures->save();
+                $imagesIdArray[] = $pictures->id;
+            }
+        }
         $portfolio->save();
+        $portfolio->imagesPortfolio()->attach($imagesIdArray);
         $portfolio->tech()->sync($techidList);
-        return response()->json($portfolio->load('tech', 'portfolioClient'));
+        return response()->json($portfolio->load('tech', 'portfolioClient', 'imagesPortfolio'));
     }
 
     /**
