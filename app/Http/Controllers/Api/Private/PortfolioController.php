@@ -214,6 +214,7 @@ class PortfolioController extends Controller
         $portfolio->tech()->detach();
         $portfolio->portfolioClient()->detach();
         $portfolio->imagesPortfolio()->detach();
+        $portfolio->tech()->detach();
         $portfolio->delete();
         return response()->json(['message' => 'Portfolio Deleted', 'Delected Data' => $portfolio]);
     }
