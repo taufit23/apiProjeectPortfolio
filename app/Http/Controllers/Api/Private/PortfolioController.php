@@ -9,6 +9,8 @@ use App\Models\Portfolio;
 use App\Models\PortfolioCient;
 use App\Models\Tech;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Support\Str;
@@ -53,20 +55,7 @@ class PortfolioController extends Controller
         if ($validator->fails()) {
             return response()->json([$validator->errors(), 401]);
         }
-        // DONE: new tech list dibuat berdasarkan title dan id dimasukan ke $techidList seleteha itu baru di sync
-        $teches = $request->tech;
-        $techidList = [];
-        foreach ($teches as $techess) {
-            $techFind = Tech::where('title', $techess)->first();
-            if (!$techFind) {
-                $cat = new Tech();
-                $cat->title = $techess;
-                $cat->save();
-                $techidList[] = $cat->id;
-            } else {
-                $techidList[] = $techFind->id;
-            }
-        }
+
         $portfolio = new Portfolio();
         $portfolio->type = $request->type;
         $portfolio->title = $request->title;
@@ -111,6 +100,20 @@ class PortfolioController extends Controller
             $imagesIdArray[] = $pictures->id;
         }
         $portfolio->save();
+        // DONE: new tech list dibuat berdasarkan title dan id dimasukan ke $techidList seleteha itu baru di sync
+        $teches = $request->tech;
+        $techidList = [];
+        foreach ($teches as $techess) {
+            $techFind = Tech::where('title', $techess)->first();
+            if (!$techFind) {
+                $cat = new Tech();
+                $cat->title = $techess;
+                $cat->save();
+                $techidList[] = $cat->id;
+            } else {
+                $techidList[] = $techFind->id;
+            }
+        }
         $portfolio->imagesPortfolio()->sync($imagesIdArray);
         $portfolio->tech()->sync($techidList);
         return response()->json($portfolio->load('tech', 'portfolioClient', 'imagesPortfolio'));
@@ -211,10 +214,6 @@ class PortfolioController extends Controller
      */
     public function destroy(Portfolio $portfolio)
     {
-        $portfolio->tech()->detach();
-        $portfolio->portfolioClient()->detach();
-        $portfolio->imagesPortfolio()->detach();
-        $portfolio->tech()->detach();
         $portfolio->delete();
         return response()->json(['message' => 'Portfolio Deleted', 'Delected Data' => $portfolio]);
     }

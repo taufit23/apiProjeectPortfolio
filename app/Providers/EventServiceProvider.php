@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Portfolio;
+use App\Observers\PortfolioObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -20,6 +22,11 @@ class EventServiceProvider extends ServiceProvider
         ],
     ];
 
+    protected $observers = [
+        Portfolio::class => [
+            PortfolioObserver::class
+        ],
+    ];
     /**
      * Register any events for your application.
      */
