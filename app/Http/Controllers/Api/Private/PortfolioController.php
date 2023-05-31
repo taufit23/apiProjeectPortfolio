@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\Api\Private;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Private\CreatePortfolioRequest;
 use App\Models\ImagesPortfolio;
 use App\Models\Portfolio;
 use App\Models\PortfolioCient;
 use App\Models\Tech;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Support\Str;
@@ -22,13 +20,15 @@ class PortfolioController extends Controller
      */
     public function index()
     {
-        $portfolio = Portfolio::with('tech', 'portfolioClient', 'imagesPortfolio')->paginate(10);
+        $user = auth()->user();
+        $portfolio = $user->portfolio()->with('tech', 'portfolioClient', 'imagesPortfolio')->paginate(10);
         foreach ($portfolio as $key => $port) {
             $port->getPreviewImageUrl();
             foreach ($port->imagesPortfolio as $key => $img) {
                 $img->getImageUrl();
             }
         }
+
         return response()->json($portfolio);
     }
 
@@ -57,6 +57,7 @@ class PortfolioController extends Controller
         }
 
         $portfolio = new Portfolio();
+        $portfolio->user_id = auth()->user()->id;
         $portfolio->type = $request->type;
         $portfolio->title = $request->title;
         $portfolio->slug = Str::slug($request->title);
@@ -64,6 +65,7 @@ class PortfolioController extends Controller
         $portfolioClient = new PortfolioCient();
         $portfolioClient->name = $request->client_name;
         $portfolioClient->type = $request->client_type;
+        $portfolioClient->testimoni = $request->testimoni;
         $portfolioClient->save();
         $portfolio->client = $portfolioClient->id;
         $portfolio->preview_url = $request->preview_url;
@@ -101,6 +103,7 @@ class PortfolioController extends Controller
         }
         $portfolio->save();
         // DONE: new tech list dibuat berdasarkan title dan id dimasukan ke $techidList seleteha itu baru di sync
+
         $teches = $request->tech;
         $techidList = [];
         foreach ($teches as $techess) {
@@ -215,7 +218,7 @@ class PortfolioController extends Controller
     public function destroy(Portfolio $portfolio)
     {
         $portfolio->delete();
-        return response()->json(['message' => 'Portfolio Deleted', 'Delected Data' => $portfolio]);
+        return response()->json(['message' => 'Portfolio Deleted', 'Old_Data' => $portfolio]);
     }
     public function setImageSize($image)
     {

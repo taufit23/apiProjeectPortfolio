@@ -25,4 +25,8 @@ class Portfolio extends Model
     {
         return $this->belongsToMany(ImagesPortfolio::class, 'portfolio_images', 'portfolio_id', 'image_portfolio_id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
