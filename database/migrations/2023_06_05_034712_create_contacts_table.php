@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('about_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('contact_type_id')->constrained()->cascadeOnDelete();
+            $table->integer('contact_type_id');
             $table->string('name');
             $table->string('url');
             $table->timestamps();
