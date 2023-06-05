@@ -29,4 +29,8 @@ class About extends Model
     {
         return $this->hasMany(Pendidikan::class);
     }
+    public function getImageUrl()
+    {
+        return $this->avatar = asset($this->avatar);
+    }
 }

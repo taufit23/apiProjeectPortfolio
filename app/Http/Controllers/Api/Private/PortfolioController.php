@@ -7,7 +7,6 @@ use App\Models\ImagesPortfolio;
 use App\Models\Portfolio;
 use App\Models\PortfolioCient;
 use App\Models\Tech;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManagerStatic as Image;

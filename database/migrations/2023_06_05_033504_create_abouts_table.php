@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('agama');
             $table->string('jenis_kelamin');
             $table->string('avatar');
-            $table->string('summary_text');
-            $table->string('about_text');
+            $table->text('summary_text');
+            $table->longText('about_text');
             $table->string('cv_file');
             $table->timestamps();
         });
