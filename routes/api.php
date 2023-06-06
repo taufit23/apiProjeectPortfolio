@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Private\AboutController;
 use App\Http\Controllers\Api\Private\PortfolioController;
+use App\Http\Controllers\Api\Private\SkillController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::apiResource('private/portfolio', PortfolioController::class);
     Route::apiResource('private/about', AboutController::class);
+    Route::apiResource('private/about/skill', SkillController::class);
     // API route for logout user
     Route::post('logout', [AuthController::class, 'logout'])->name('api.logout');
 });

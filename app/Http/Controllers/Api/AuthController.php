@@ -32,7 +32,7 @@ class AuthController extends Controller
             'password' => 'required|min:8|confirmed|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/'
         ], $this->message());
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json(['errors' => $validator->errors(), 'code' => 401]);
         }
         $user = User::create([
             'name' => $request->name,

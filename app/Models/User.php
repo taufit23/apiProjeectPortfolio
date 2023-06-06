@@ -47,6 +47,6 @@ class User extends Authenticatable
     }
     public function about()
     {
-        return $this->hasOne(About::class);
+        return $this->belongsTo(About::class);
     }
 }
