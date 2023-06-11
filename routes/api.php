@@ -4,10 +4,11 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Private\AboutController;
 use App\Http\Controllers\Api\Private\PortfolioController;
 use App\Http\Controllers\Api\Private\SkillController;
+use App\Http\Controllers\Api\Public\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
+Route::get('/', [HomeController::class, 'index'])->name('api.home');
 
 Route::post('register', [AuthController::class, 'register'])->name('api.register');
 Route::post('login', [AuthController::class, 'login'])->name('api.login');

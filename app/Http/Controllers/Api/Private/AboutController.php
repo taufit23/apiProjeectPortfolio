@@ -27,13 +27,13 @@ class AboutController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'tanggal_lahir' => 'required|',
-            'alamat_ktp' => 'required|',
-            'alamat_domisili' => 'required|',
-            'agama' => 'required|',
-            'jenis_kelamin' => 'required|',
-            'summary_text' => 'required|',
-            'about_text' => 'required|',
+            'tanggal_lahir' => 'required',
+            'alamat_ktp' => 'required',
+            'alamat_domisili' => 'required',
+            'agama' => 'required',
+            'jenis_kelamin' => 'required',
+            'summary_text' => 'required',
+            'about_text' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());
