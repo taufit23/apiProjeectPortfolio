@@ -8,10 +8,14 @@ use App\Http\Controllers\Api\Public\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class, 'index'])->name('api.home');
+// public api
+Route::get('/{name}', [HomeController::class, 'index'])->name('api.home');
 
+// auth api
 Route::post('register', [AuthController::class, 'register'])->name('api.register');
 Route::post('login', [AuthController::class, 'login'])->name('api.login');
+
+// private api
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/profile', function (Request $request) {
         return auth()->user();
